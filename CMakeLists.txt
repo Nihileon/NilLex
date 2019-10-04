@@ -40,15 +40,15 @@ project(my_proj)
 #add_subdirectory(analysis)
 #添加可执行文件
 #jumpComment.cpp
-add_executable(my_exe analyze.cpp  )
+
+add_executable(my src/Utils.cpp src/Utils.h src/Symbol.cpp src/Symbol.h src/Counter.h src/Analyzer.cpp src/Analyzer.h src/main.cpp src/FileReader.h src/FileReader.cpp src/Count.cpp)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 #链接的库
 #target_link_libraries(my_exe)
 #设置
 
+set_property(TARGET my PROPERTY CXX_STANDARD 17)
 
-set_property(TARGET my_exe PROPERTY CXX_STANDARD 17)
-
-target_link_libraries(my_exe gtest gtest_main)
+target_link_libraries(my gtest gtest_main)
 
 #add_test(NAME example_test COMMAND my_exe)
