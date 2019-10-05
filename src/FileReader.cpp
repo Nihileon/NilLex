@@ -1,7 +1,7 @@
-#include <fstream>
-#include <iostream>
 #include "FileReader.h"
 #include "gtest/gtest.h"
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -34,11 +34,8 @@ void FileReader::testReadFile() {
         std::cout << temp_line << std::endl;
         std::cout << lineNum;
     }
-
     file.close();
-
 }
-
 
 std::string FileReader::readWholeFile(std::string filePath) {
 

@@ -43,7 +43,9 @@ public:
                s == "." || s == "/" || s == ">" || s == "<" || s == "<=" || s == ">=" || s == "&&" || s == "||";
     }
 
+
     static int SToI(std::string s, bool &isInteger, int &at) {
+        int curAt = at;
         if (s.size() == 0) {
             isInteger = false;
             return 0;
@@ -51,10 +53,11 @@ public:
         int result = 0;
         int negativeSymbol = 1;
         int prefixZeroCnt = 0;
-        if (s.at(0) == '-') {
+        int c = s[curAt];
+        if (c == '-') {
             negativeSymbol = -1;
-        } else if (isDigit(s.at(0))) {
-            result = s.at(0) - '0';
+        } else if (isDigit(c)) {
+            result = c - '0';
             if (result == 0) {
                 prefixZeroCnt++;
             }
@@ -62,50 +65,55 @@ public:
             isInteger = false;
             return 0;
         }
-        int i = 1;
-        for (; i < s.size() && s.at(i) - '0' == 0; i++) {
-            if (prefixZeroCnt == 0) {
-                prefixZeroCnt++;
-            } else {
-                isInteger = false;
-                return 0;
+        curAt++;
+        //去0处理：如果开头是-1则需要检测其后是否有两个0，如果是1-9则可以跳过，如果是0开头则需要检测其后是否有两个0；
+        if (negativeSymbol == -1 || prefixZeroCnt > 0) {
+            for (; curAt < s.size() && s[curAt] - '0' == 0; curAt++) {
+                if (prefixZeroCnt == 0) {
+                    prefixZeroCnt++;
+                } else {
+                    isInteger = false;
+                    return 0;
+                }
             }
         }
 
-        for (; i < s.size(); i++) {
-            if (!isdigit(s.at(i)) || prefixZeroCnt > 0) {
+        for (; curAt < s.size(); curAt++) {
+            if (!isdigit(s[curAt]) || prefixZeroCnt > 0) {
                 isInteger = false;
                 return 0;
             }
-            int c = s.at(i) - '0';
-            result = result * 10 + (s.at(i) - '0');
+            result = result * 10 + (s[curAt] - '0');
         }
         isInteger = true;
+        at = curAt;
         return negativeSymbol * result;
     }
 
     static int SToI(std::string s, bool &isInteger) {
         int i = 0;
-        SToI(s, isInteger, i);
+        return SToI(s, isInteger, i);
     }
 
     static double SToD(std::string s, bool &isDouble, int &at) {
+        int curAt = at;
         if (s.size() == 0) {
             isDouble = false;
             return 0;
         }
         double negativeSymbol = 1.0;
         double prefix = 0;
-        if (s[at] == '-') {
+        if (s[curAt] == '-') {
             negativeSymbol = -1.0;
         } else {
-            prefix = s[at] - '0';
+            prefix = s[curAt] - '0';
         }
+        curAt++;
         int dotCnt = 0;
         int suffixCnt = 0;
         double suffix = 0.0;
-        for (int i = 1; i < s.size(); i++) {
-            char c = s.at(i);
+        for (; curAt < s.size(); curAt++) {
+            char c = s[curAt];
             if (!isDigit(c) && !isDot(c)) {
                 isDouble = false;
                 return 0.0;
@@ -128,27 +136,52 @@ public:
 
     static double SToD(std::string s, bool &isDouble) {
         int i = 0;
-        SToD(s, isDouble, i);
+        return SToD(s, isDouble, i);
     }
 
     static auto CToS(char c) {
         return std::string(1, c);
     }
 
-    static std::string matchWord(std::string s, int &at) {
+    static std::string matchPunctuation(std::string s, int &at) {
         std::string result;
-        for (; at < s.length(); at++) {
-            if (!isValidWordCharacter(s.at(at))) {
+        int curAt = at;
+        if (isPunctuation(CToS(s[curAt]))) {
+            result.append(CToS(s[curAt]));
+        }
+        if (curAt + 1 < s.length() && isPunctuation(CToS(s[curAt + 1]))) {
+            result.append(CToS(s[curAt + 1]));
+            at = curAt + 2;
+        } else {
+            at = curAt + 1;
+        }
+        return result;
+
+    }
+
+
+    static std::string matchWord(std::string s, bool &isWord, int &at) {
+        int curAt = at;
+        std::string result;
+        if (!isValidWordBegin(s[curAt])) {
+            isWord = false;
+            return result;
+        }
+        for (; curAt < s.length(); curAt++) {
+            if (!isValidWordCharacter(s[curAt])) {
                 break;
             }
-            result.append(CToS(s.at(at)));
+            result.append(CToS(s[curAt]));
         }
+
+        isWord = true;
+        at = curAt;
         return result;
     }
 
-    static std::string matchWord(std::string s) {
-        int i = 0;
-        matchWord(s, i);
+    static std::string matchWord(std::string s, int &i) {
+        bool isWord = false;
+        return matchWord(s, isWord, i);
     }
 
     //at 最终指向一个未被检测的字符
@@ -168,13 +201,13 @@ public:
                     at = curAt + 1;
                     return true;
                 }
-                //todo deal with case: //之后用反斜杠阻隔换行符号，此时行数需要加一
             } else if (curAt < s.size() && s[curAt] == '*') {
+                //todo deal with case: //之后用反斜杠阻隔换行符号，此时行数需要加一
                 curAt++;
-                while (curAt < s.size() && s[curAt] != '*' && curAt + 1 < s.size() && s[curAt] != '/') {
+                while ((curAt < s.size() && s[curAt] != '*') || (curAt + 1 < s.size() && s[curAt + 1] != '/')) {
                     curAt++;
                 }
-                if (curAt < s.size() && s[curAt] == '*' && curAt + 1 < s.size() && s[curAt] == '/') {
+                if (curAt < s.size() && s[curAt] == '*' && curAt + 1 < s.size() && s[curAt + 1] == '/') {
                     at = curAt + 2;
                     return true;
                 }
@@ -182,7 +215,6 @@ public:
         }
         return false;
     }
-
 };
 
 #endif //MY_PROJ_UTILS_H

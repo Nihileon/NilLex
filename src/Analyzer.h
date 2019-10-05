@@ -37,10 +37,30 @@ public:
                 continue;
             }
             if (Utils::isValidWordBegin(c)) {
-                Utils::matchWord(file, i);
+                std::string symbolName = Utils::matchWord(file, i);
+                int symbol = Symbol::getSymbolId(symbolName);
+                if (symbol == -1) {
+                    //todo deal with error
+                } else {
+                    symbolCntMap[symbol]++;
+                }
 
             } else if (Utils::isDigit(c)) {
+                //todo 对负数进行处理
+                bool isInteger = false;
+                int resultInt = Utils::SToI(file, isInteger, i);
+                if (isInteger) {
+                    std::cout << resultInt << std::endl;
+                } else {
+                    bool isDouble = false;
+                    double resultDoub = Utils::SToD(file, isDouble, i);
+                    if (!isDouble) {
+                        // todo：两种数字都不是则说明炸了
+                    }
+                }
+
             } else if (Utils::isPunctuation(Utils::CToS(c))) {
+
             }
         }
     }

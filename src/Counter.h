@@ -5,9 +5,7 @@
 #ifndef MY_PROJ_COUNTER_H
 #define MY_PROJ_COUNTER_H
 
-
 class Counter {
-
 
 public:
     static int rowCnt;
@@ -20,9 +18,8 @@ public:
 
     static int getPunctuationCnt();
 
-    static void init(){
-
-   }
+    static void init() {
+    }
 
     static void IncRowCnt() {
         rowCnt++;
@@ -39,6 +36,5 @@ public:
     static void addRowCnt(int rowNum) {
         rowCnt += rowNum;
     }
-
 };
 #endif //MY_PROJ_COUNTER_H

@@ -4,13 +4,17 @@
 //#include "gtest/gtest.h"
 #include "Utils.h"
 
-TEST(SuiteName, TestName) {
+TEST(lex, AnyToDigit) {
     std::cout << std::endl;
 
     Utils a;
     bool isDouble = false;
     std::cout << a.SToD("-1231.133333", isDouble) << std::endl;
-    std::cout << isDouble;
+    assert(isDouble);
+
+    isDouble = false;
+    std::cout << a.SToD("-0000.0000", isDouble);
+    assert(isDouble);
 
     bool isInteger = false;
     a.SToI("-0000.0000", isInteger);
@@ -22,7 +26,7 @@ TEST(SuiteName, TestName) {
     a.SToI("*&(", isInteger);
     assert(!isInteger);
 
-    std::cout << a.SToI("-123000", isInteger) << std::endl;
+    assert(a.SToI("-123000", isInteger) == -123000);
     assert(isInteger);
 
     a.SToI("-0123000", isInteger);
@@ -30,12 +34,91 @@ TEST(SuiteName, TestName) {
 
     a.SToI("-00123000", isInteger);
     assert(!isInteger);
-
-    int at = 0;
-    std::string s = "//123456789\n1234567890";
-    a.stripComment(s, at);
-
-    std::cout << at << std::endl;
-    std::cout << s[at];
 }
 
+TEST(lex, matchWordWithAt) {
+    Utils u;
+    bool isInteger = false;
+    int i = 0;
+    u.SToI("-0000.0000", isInteger, i);
+    assert(!isInteger);
+    assert(i == 0);
+
+    i = 1;
+    u.SToI("-01000", isInteger, i);
+    assert(!isInteger);
+    assert(i == 1);
+
+    i = 2;
+    int result = u.SToI("-01000", isInteger, i);
+    assert(result = 1000);
+    assert(isInteger);
+    assert(i == 6);
+
+    i = 0;
+    bool isDouble = false;
+    double d = u.SToD("-0000.0000", isDouble, i);
+    assert(d < 0.00000001 && d > -0.0000001);
+    assert(isDouble);
+
+    i = 0;
+    isDouble = false;
+    d = u.SToD("-1000.0000", isDouble, i);
+    assert(d < -999.99999 && d > -1000.0000001);
+    assert(isDouble);
+
+    i = 2;
+    isDouble = false;
+    d = u.SToD("-1000.0001", isDouble, i);
+    assert(d < 0.001 && d > 0);
+    assert(isDouble);
+
+
+}
+
+TEST(lex, comment) {
+
+    Utils a;
+    int at = 0;
+    std::string s = "//123456789\n1234567890";
+    assert(a.stripComment(s, at));
+    assert(at == 12);
+
+    s = "/*23456789\n123456789/******/89";
+    at = 0;
+
+    assert(a.stripComment(s, at));
+    std::cout << std::endl << at;
+}
+
+
+TEST(lex, matchWord) {
+    Utils a;
+    int at = 0;
+    std::string s = "dhfkalsdk12837y_dashfk9";
+    bool isWord = false;
+    a.matchWord(s, isWord, at);
+    assert(isWord);
+
+    at = 0;
+    s = "_1231230191";
+    isWord = false;
+    a.matchWord(s, isWord, at);
+    assert(isWord);
+
+    at = 0;
+    s = "1231230191";
+    isWord = false;
+    a.matchWord(s, isWord, at);
+    assert(!isWord);
+    assert(at == 0);
+
+
+    at = 0;
+    s = "abc45678_ 123";
+    isWord = false;
+    a.matchWord(s, isWord, at);
+    assert(isWord);
+    assert(at == 9);
+
+}

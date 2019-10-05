@@ -41,7 +41,7 @@ project(my_proj)
 #添加可执行文件
 #jumpComment.cpp
 
-add_executable(my src/Utils.cpp src/Utils.h src/Symbol.cpp src/Symbol.h src/Counter.h src/Analyzer.cpp src/Analyzer.h src/main.cpp src/FileReader.h src/FileReader.cpp src/Count.cpp)
+add_executable(my src/Utils.cpp src/Utils.h src/Symbol.cpp src/Symbol.h src/Counter.h src/Analyzer.cpp src/Analyzer.h src/main.cpp src/FileReader.h src/FileReader.cpp src/Counter.cpp)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 #链接的库
 #target_link_libraries(my_exe)
