@@ -9,8 +9,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: printKeyMapResult
-      run: cd ./data-generator && python3 generateMap.py
     - name: configure
       run: ./configure
     - name: make
