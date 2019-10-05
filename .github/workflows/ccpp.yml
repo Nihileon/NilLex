@@ -9,12 +9,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: configure
-      run: ./configure
+    - name: cmake
+      run: cmake -G "Unix Makefiles" .
     - name: make
       run: make
     - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      run: make --check
       
