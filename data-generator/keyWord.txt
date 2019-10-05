@@ -1,5 +1,5 @@
 parameter
-integer
+decimalInteger
 double
 auto
 break
