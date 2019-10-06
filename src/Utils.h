@@ -6,6 +6,7 @@
 #define MY_PROJ_UTILS_H
 
 #include "gtest/gtest.h"
+#include "Symbol.h"
 #include <cmath>
 
 //using namespace std;
@@ -40,9 +41,22 @@ public:
         return s == "[" || s == "]" || s == "{" || s == "}" || s == "(" || s == ")" || s == ";" || s == "!" ||
                s == "%" || s == "^" || s == "&" || s == "|" || s == "~" || s == "*" || s == "?" || s == "," ||
                s == "-" || s == "+" || s == "=" || s == "==" || s == "+=" || s == "-=" || s == "++" || s == "--" ||
-               s == "." || s == "/" || s == ">" || s == "<" || s == "<=" || s == ">=" || s == "&&" || s == "||";
+               s == "." || s == "/" || s == ">" || s == "<" || s == "<=" || s == ">=" || s == "&&" || s == "||" ||
+               s == "#" || s == "\"" || s == "'" || s == "\\";
     }
 
+    static bool isValidDigitBegin(std::string s, int at) {
+        if (at > s.length()) {
+            return false;
+        }
+        if (isdigit(s[at])) {
+            return true;
+        }
+        if (s[at] == '-' && at + 1 < s.length() && isDigit(s[at + 1])) {
+            return true;
+        }
+        return false;
+    }
 
     static int SToI(std::string s, bool &isInteger, int &at) {
         int curAt = at;
@@ -79,7 +93,10 @@ public:
         }
 
         for (; curAt < s.size(); curAt++) {
-            if (!isdigit(s[curAt]) || prefixZeroCnt > 0) {
+            if (!isdigit(s[curAt])) {
+                break;
+            }
+            if (prefixZeroCnt > 0) {
                 isInteger = false;
                 return 0;
             }
@@ -96,9 +113,9 @@ public:
     }
 
     static double SToD(std::string s, bool &isDouble, int &at) {
+        isDouble = false;
         int curAt = at;
         if (s.size() == 0) {
-            isDouble = false;
             return 0;
         }
         double negativeSymbol = 1.0;
@@ -114,10 +131,6 @@ public:
         double suffix = 0.0;
         for (; curAt < s.size(); curAt++) {
             char c = s[curAt];
-            if (!isDigit(c) && !isDot(c)) {
-                isDouble = false;
-                return 0.0;
-            }
             if (isDigit(c) && dotCnt == 0) {
                 prefix = prefix * 10 + (c - '0');
             } else if (isDigit(c) && dotCnt == 1) {
@@ -126,11 +139,13 @@ public:
             } else if (isDot(c) && 0 == dotCnt) {
                 dotCnt++;
             } else {
-                isDouble = false;
-                return 0;
+                break;
             }
         }
-        isDouble = true;
+        if (dotCnt == 1 && suffixCnt > 0) {
+            at = curAt;
+            isDouble = true;
+        }
         return (prefix + suffix) * negativeSymbol;
     }
 
@@ -143,19 +158,33 @@ public:
         return std::string(1, c);
     }
 
-    static std::string matchPunctuation(std::string s, int &at) {
+
+    static std::string getValidWordToSeparator(std::string s, int at) {
         std::string result;
-        int curAt = at;
-        if (isPunctuation(CToS(s[curAt]))) {
-            result.append(CToS(s[curAt]));
-        }
-        if (curAt + 1 < s.length() && isPunctuation(CToS(s[curAt + 1]))) {
-            result.append(CToS(s[curAt + 1]));
-            at = curAt + 2;
-        } else {
-            at = curAt + 1;
+        while (!isSeparator(s[at])) {
+            result.append(CToS(s[at]));
+            at++;
         }
         return result;
+    }
+
+    static std::string matchPunctuation(std::string s, int &at) {
+        std::string monoPunc;
+        int curAt = at;
+        if (isPunctuation(CToS(s[curAt]))) {
+            monoPunc.append(CToS(s[curAt]));
+        }
+        if (curAt + 1 < s.length() && isPunctuation(CToS(s[curAt + 1]))) {
+            std::string diPunc = monoPunc;
+            diPunc.append(CToS(s[curAt + 1]));
+            if (Symbol::getSymbolId(diPunc) != Symbol::getSymbolId(Symbol::PARAMETER) &&
+                Symbol::getSymbolId(diPunc) > 0) {
+                at = curAt + 2;
+                return diPunc;
+            }
+        }
+        at = curAt + 1;
+        return monoPunc;
 
     }
 
@@ -185,36 +214,7 @@ public:
     }
 
     //at 最终指向一个未被检测的字符
-    static bool stripComment(std::string s, int &at) {
-        int curAt = at;
-        if (curAt > s.size()) {
-            return false;
-        }
-        if (s[curAt] == '/') {
-            curAt++;
-            if (curAt < s.size() && s[curAt] == '/') {
-                curAt++;
-                while (curAt < s.size() && s[curAt] != '\n') {
-                    curAt++;
-                }
-                if (curAt < s.size() && s[curAt] == '\n') {
-                    at = curAt + 1;
-                    return true;
-                }
-            } else if (curAt < s.size() && s[curAt] == '*') {
-                //todo deal with case: //之后用反斜杠阻隔换行符号，此时行数需要加一
-                curAt++;
-                while ((curAt < s.size() && s[curAt] != '*') || (curAt + 1 < s.size() && s[curAt + 1] != '/')) {
-                    curAt++;
-                }
-                if (curAt < s.size() && s[curAt] == '*' && curAt + 1 < s.size() && s[curAt + 1] == '/') {
-                    at = curAt + 2;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    static bool stripComment(std::string s, int &at);
 };
 
 #endif //MY_PROJ_UTILS_H

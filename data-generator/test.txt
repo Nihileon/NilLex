@@ -19,7 +19,7 @@ int main()
     printf("%s\n",temp_line);
   }
 
-  //移动文件指针到文件开头
+  //test
   rewind(fp);
 
   while(!feof(fp))

@@ -1,5 +1,5 @@
 parameter
-decimalInteger
+integer
 double
 auto
 break
@@ -66,3 +66,7 @@ main
 >=
 &&
 ||
+#
+\"
+'
+\\

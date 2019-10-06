@@ -3,6 +3,7 @@
 #include <map>
 //#include "gtest/gtest.h"
 #include "Utils.h"
+#include "Counter.h"
 
 TEST(lex, AnyToDigit) {
     std::cout << std::endl;
@@ -34,15 +35,44 @@ TEST(lex, AnyToDigit) {
 
     a.SToI("-00123000", isInteger);
     assert(!isInteger);
+
 }
 
 TEST(lex, matchWordWithAt) {
     Utils u;
     bool isInteger = false;
-    int i = 0;
-    u.SToI("-0000.0000", isInteger, i);
+    int i = 1;
+    u.SToI(" -0000.0000 ", isInteger, i);
     assert(!isInteger);
-    assert(i == 0);
+    assert(i == 1);
+
+    i = 3;
+    isInteger = false;
+    int result = u.SToI("   0; ", isInteger, i);
+    assert(isInteger);
+    std::cout << result << std::endl;
+    assert(result == 0);
+
+    i = 3;
+    isInteger = false;
+    result = u.SToI("   255; ", isInteger, i);
+    assert(isInteger);
+    std::cout << result << std::endl;
+    assert(result == 255);
+
+    i = 3;
+    isInteger = false;
+    result = u.SToI("   1; ", isInteger, i);
+    assert(isInteger);
+    std::cout << result << std::endl;
+    assert(result == 1);
+
+    i = 3;
+    isInteger = false;
+    result = u.SToI("   -0; ", isInteger, i);
+    assert(isInteger);
+    std::cout << result << std::endl;
+    assert(result == 0);
 
     i = 1;
     u.SToI("-01000", isInteger, i);
@@ -50,26 +80,26 @@ TEST(lex, matchWordWithAt) {
     assert(i == 1);
 
     i = 2;
-    int result = u.SToI("-01000", isInteger, i);
+    result = u.SToI("-01000", isInteger, i);
     assert(result = 1000);
     assert(isInteger);
     assert(i == 6);
 
     i = 0;
     bool isDouble = false;
-    double d = u.SToD("-0000.0000", isDouble, i);
+    double d = u.SToD("-0000.0000 ", isDouble, i);
     assert(d < 0.00000001 && d > -0.0000001);
     assert(isDouble);
 
     i = 0;
     isDouble = false;
-    d = u.SToD("-1000.0000", isDouble, i);
+    d = u.SToD("-1000.0000 ", isDouble, i);
     assert(d < -999.99999 && d > -1000.0000001);
     assert(isDouble);
 
     i = 2;
     isDouble = false;
-    d = u.SToD("-1000.0001", isDouble, i);
+    d = u.SToD("-1000.0001 ", isDouble, i);
     assert(d < 0.001 && d > 0);
     assert(isDouble);
 
@@ -113,12 +143,51 @@ TEST(lex, matchWord) {
     assert(!isWord);
     assert(at == 0);
 
-
     at = 0;
     s = "abc45678_ 123";
     isWord = false;
     a.matchWord(s, isWord, at);
     assert(isWord);
     assert(at == 9);
+}
 
+TEST(lex, punctuation) {
+    int i = 0;
+    Utils::matchPunctuation("(;", i);
+
+}
+
+bool Utils::stripComment(std::string s, int &at) {
+    int curAt = at;
+    if (curAt > s.size()) {
+        return false;
+    }
+    if (s[curAt] == '/') {
+        curAt++;
+        if (curAt < s.size() && s[curAt] == '/') {
+            curAt++;
+            while (curAt < s.size() && s[curAt] != '\n') {
+                curAt++;
+            }
+            if (curAt < s.size() && s[curAt] == '\n') {
+                Counter::incLineCnt();
+                at = curAt + 1;
+                return true;
+            }
+        } else if (curAt < s.size() && s[curAt] == '*') {
+            //todo deal with case: //之后用反斜杠阻隔换行符号，此时行数需要加一
+            curAt++;
+            while ((curAt < s.size() && s[curAt] != '*') || (curAt + 1 < s.size() && s[curAt + 1] != '/')) {
+                if (s[curAt] == '\n') {
+                    Counter::incLineCnt();
+                }
+                curAt++;
+            }
+            if (curAt < s.size() && s[curAt] == '*' && curAt + 1 < s.size() && s[curAt + 1] == '/') {
+                at = curAt + 2;
+                return true;
+            }
+        }
+    }
+    return false;
 }
