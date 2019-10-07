@@ -7,7 +7,7 @@
 
 ## Test
 
-[![Actions Status](https://xxx.execute-api.us-west-2.amazonaws.com/production/badge/{Nihileon}/{NilLex})](https://xxx.execute-api.us-west-2.amazonaws.com/production/results/{Nihileon}/{NilLex})
+[![Actions Status](https://github.com/{Nihileon}/{NilLex}/workflows/{workflow_name}/badge.svg)](https://github.com/{Nihileon}/{NilLex}/actions)
 
 ## Install
 
