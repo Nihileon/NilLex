@@ -173,7 +173,6 @@ bool Utils::stripComment(std::string s, int &at) {
                 return true;
             }
         } else if (curAt < s.size() && s[curAt] == '*') {
-            //todo deal with case: //之后用反斜杠阻隔换行符号，此时行数需要加一
             curAt++;
             while ((curAt < s.size() && s[curAt] != '*') || (curAt + 1 < s.size() && s[curAt + 1] != '/')) {
                 if (s[curAt] == '\n') {

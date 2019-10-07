@@ -52,7 +52,7 @@ void Analyzer::start() {
                     Counter::incSymbolCntMap(Symbol::DOUBLE);
                     std::cout << "get a doub : '" << resultDouble << "' " << Utils::getPositionStr(i) << std::endl;
                 } else {
-                    // todo：两种数字都不是则说明炸了
+                    //
                     std::cout << "'" << Utils::getValidWordToSeparator(file, i) << "'" << std::endl;
                     std::cout << "it is not a digit" << Utils::getPositionStr(i) << std::endl;
                 }
@@ -64,10 +64,20 @@ void Analyzer::start() {
             std::cout << "get a punc : '" << punctuation << "' " << Utils::getPositionStr(i) << std::endl;
             if (c == '/') {
                 Utils::stripComment(file, i);
-            }
-            if (c == '"') {
-                Utils::stripString(file, i);
-                Counter::addSymbolCntMap(Utils::CToS(c), 2);
+            } else if (c == '"') {
+                bool isString = false;
+                std::string str = Utils::getString(file, isString, i);
+                if (!isString) {
+                    std::cout << "unknown stri: '" << str << "' " << Utils::getPositionStr(i) << std::endl;
+                }
+//                Counter::addSymbolCntMap(Utils::CToS(c), 2);
+            } else if (c == '\'') {
+                bool isChar = false;
+                std::string str = Utils::getChar(file, isChar, i);
+                if (!isChar) {
+                    std::cout << "unknown char: '" << str << "' " << Utils::getPositionStr(i) << std::endl;
+                }
+
             } else {
                 Counter::addSymbolCntMap(punctuation, 1);
             }

@@ -217,17 +217,29 @@ public:
     //at 最终指向一个未被检测的字符
     static bool stripComment(std::string s, int &at);
 
-    static bool stripString(std::string s, int &at) {
+    static std::string matchStringOrChar(std::string s, bool &isString, int &at, char matchCase) {
+        std::string result = CToS(matchCase);
         int curAt = at;
-        if (s[curAt] == '"') {
-            curAt++;
-            for (; curAt < s.length() && s[curAt] != '"'; curAt++);
+        for (; curAt < s.length() && s[curAt] != matchCase && s[curAt] != '\n'; curAt++) {
+            result.append(CToS(s[curAt]));
         }
-        if (curAt < s.length()) {
-            at = curAt;
-            return true;
-        }
-        return false;
+        isString = curAt < s.length() && s[curAt] == matchCase;
+        at = curAt + 1;
+        return result;
+    }
+
+    static std::string getString(std::string s, bool &isString, int &at) {
+       return matchStringOrChar(s, isString, at, '"');
+    }
+
+    static std::string getChar(std::string s, bool &isString, int &at) {
+       return matchStringOrChar(s, isString, at, '\'');
+    }
+
+    static bool stripString(std::string s, int &at) {
+        bool isString = false;
+        getString(s, isString, at);
+        return isString;
     }
 
     static std::string getPositionStr(int at);

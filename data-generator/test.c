@@ -30,3 +30,20 @@ int main() {
 
     return 0;
 }
+
+0a0
+
+0*0
+0'0
+1'1
+1h1
+
+a'a
+b''ber_int_tc
+c"c
+9(
+        s&SS    a`a`~`
+        "fasdsdfas   fsa89() fs09fa80 908 0
+
+
+
