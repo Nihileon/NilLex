@@ -24,13 +24,13 @@ public:
     static int getPunctuationCnt();
 
 
-
     static void updateLineBeginCharCnt(int at) {
         lineBeginCharCnt = at;
     }
+
     // at 指向下一位
     static int getColumnCntAtCurrentLine(int at) {
-        return at -1- lineBeginCharCnt;
+        return at - 1 - lineBeginCharCnt;
     }
 
     static void incLineCntUpdateCharCnt(int at) {
@@ -70,7 +70,7 @@ public:
     }
 
     static bool incSymbolCntMap(std::string s) {
-        addSymbolCntMap(s, 1);
+        return addSymbolCntMap(s, 1);
     }
 
 

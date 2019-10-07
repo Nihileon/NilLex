@@ -7,7 +7,6 @@
 
 TEST(a, b) {
     Analyzer a("./data-generator/test.c");
-//    a.printFile();
     a.start();
     Counter::print();
 }

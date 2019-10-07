@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <map>
-//#include "gtest/gtest.h"
 #include "Utils.h"
 #include "Counter.h"
 
@@ -102,7 +101,6 @@ TEST(lex, matchWordWithAt) {
     d = u.SToD("-1000.0001 ", isDouble, i);
     assert(d < 0.001 && d > 0);
     assert(isDouble);
-
 
 }
 

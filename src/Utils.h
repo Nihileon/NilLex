@@ -10,8 +10,6 @@
 #include <cmath>
 #include <sstream>
 
-//using namespace std;
-
 class Utils {
 public:
     static bool isLetter(char c) {
