@@ -7,12 +7,12 @@
 
 ## Test
 
-[![Actions Status](https://github.com/{Nihileon}/{NilLex}/workflows/{workflow_name}/badge.svg)](https://github.com/{Nihileon}/{NilLex}/actions)
+[![Actions Status](https://github.com/Nihileon/NilLex/workflows/C%2FC%2B%2B%20CI/badge.svg)](https://github.com/Nihileon/NilLex/actions)
 
 ## Install
 
 ```sh
-cmake -G &#34;Unix Makefiles&#34; . && make
+cmake -G "Unix Makefiles" . && make
 ```
 
 ## Author
