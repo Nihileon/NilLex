@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 #include "Symbol.h"
 #include <cmath>
+#include <sstream>
 
 //using namespace std;
 
@@ -52,8 +53,10 @@ public:
         if (isdigit(s[at])) {
             return true;
         }
-        if (s[at] == '-' && at + 1 < s.length() && isDigit(s[at + 1])) {
-            return true;
+        if (at + 1 < s.length()) {
+            if (s[at] == '-' && isDigit(s[at + 1])) {
+                return true;
+            }
         }
         return false;
     }
@@ -215,6 +218,21 @@ public:
 
     //at 最终指向一个未被检测的字符
     static bool stripComment(std::string s, int &at);
+
+    static bool stripString(std::string s, int &at) {
+        int curAt = at;
+        if (s[curAt] == '"') {
+            curAt++;
+            for (; curAt < s.length() && s[curAt] != '"'; curAt++);
+        }
+        if (curAt < s.length()) {
+            at = curAt;
+            return true;
+        }
+        return false;
+    }
+
+    static std::string getPositionStr(int at);
 };
 
 #endif //MY_PROJ_UTILS_H

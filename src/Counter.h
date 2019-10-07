@@ -14,6 +14,7 @@ private:
     static int lineCnt;
     static int wordCnt;
     static int punctuationCnt;
+    static int lineBeginCharCnt;
     static std::map<int, int> symbolCntMap;
 public:
     static int getLineCnt();
@@ -22,7 +23,19 @@ public:
 
     static int getPunctuationCnt();
 
-    static void init() {
+
+
+    static void updateLineBeginCharCnt(int at) {
+        lineBeginCharCnt = at;
+    }
+    // at 指向下一位
+    static int getColumnCntAtCurrentLine(int at) {
+        return at -1- lineBeginCharCnt;
+    }
+
+    static void incLineCntUpdateCharCnt(int at) {
+        incLineCnt();
+        updateLineBeginCharCnt(at);
     }
 
     static void incLineCnt() {
@@ -41,7 +54,7 @@ public:
         lineCnt += rowNum;
     }
 
-    static bool incSymbolCntMap(std::string s) {
+    static bool addSymbolCntMap(std::string s, int num) {
         int symbolId = Symbol::getSymbolId(s);
         if (symbolId == -1) {
             return false;
@@ -49,12 +62,17 @@ public:
         const int a = 1;
         Counter::symbolCntMap.count(a);
         if (Counter::symbolCntMap.count(symbolId) == 0) {
-            Counter::symbolCntMap.insert(std::make_pair(symbolId, 1));
+            Counter::symbolCntMap.insert(std::make_pair(symbolId, num));
         } else {
-            Counter::symbolCntMap[symbolId]++;
+            Counter::symbolCntMap[symbolId] += num;
         }
         return true;
     }
+
+    static bool incSymbolCntMap(std::string s) {
+        addSymbolCntMap(s, 1);
+    }
+
 
     static int getSymbolCnt(std::string s) {
         int symbolId = Symbol::getSymbolId(s);

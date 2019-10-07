@@ -170,7 +170,7 @@ bool Utils::stripComment(std::string s, int &at) {
                 curAt++;
             }
             if (curAt < s.size() && s[curAt] == '\n') {
-                Counter::incLineCnt();
+                Counter::incLineCntUpdateCharCnt(curAt);
                 at = curAt + 1;
                 return true;
             }
@@ -179,7 +179,7 @@ bool Utils::stripComment(std::string s, int &at) {
             curAt++;
             while ((curAt < s.size() && s[curAt] != '*') || (curAt + 1 < s.size() && s[curAt + 1] != '/')) {
                 if (s[curAt] == '\n') {
-                    Counter::incLineCnt();
+                    Counter::incLineCntUpdateCharCnt(curAt);
                 }
                 curAt++;
             }
@@ -191,3 +191,11 @@ bool Utils::stripComment(std::string s, int &at) {
     }
     return false;
 }
+
+std::string Utils::getPositionStr(int at) {
+    std::ostringstream s;
+    s << ", at line: " << Counter::getLineCnt() << " , at col: " << Counter::getColumnCntAtCurrentLine(at);
+    return s.str();
+}
+
+

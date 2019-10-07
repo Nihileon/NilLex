@@ -7,6 +7,7 @@
 int Counter::lineCnt = 1;
 int Counter::wordCnt = 0;
 int Counter::punctuationCnt = 0;
+int Counter::lineBeginCharCnt = 0;
 std::map<int, int> Counter::symbolCntMap = {};
 
 

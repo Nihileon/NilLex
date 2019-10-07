@@ -6,12 +6,12 @@
 using namespace std;
 
 TEST(SuiteNam3, TestName3) {
-    std::cout << FileReader::readWholeFile("./data-generator/test.txt");
+    std::cout << FileReader::readWholeFile("./data-generator/test.c");
 }
 
 void FileReader::testReadFile() {
     std::ifstream file;
-    file.open("./data-generator/test.txt", std::ios::in);
+    file.open("./data-generator/test.c", std::ios::in);
     if (!file) {
         throw "not a file";
     }
