@@ -39,24 +39,43 @@ void Analyzer::start() {
             continue;
         }
         if (Utils::isValidDigitBegin(file, i)) { // 数字
-            // todo 对负数进行处理
-            bool isInteger = false;
-            int resultInt = Utils::SToI(file, isInteger, i);
-            if (isInteger) { // 整数
-                Counter::incSymbolCntMap(Symbol::INTEGER);
-                std::cout << "get a inte : '" << resultInt << "' " << Utils::getPositionStr(i) << std::endl;
-            } else { // 浮点
-                bool isDouble = false;
-                double resultDouble = Utils::SToD(file, isDouble, i);
-                if (isDouble) {
-                    Counter::incSymbolCntMap(Symbol::DOUBLE);
-                    std::cout << "get a doub : '" << resultDouble << "' " << Utils::getPositionStr(i) << std::endl;
+//            // todo 对负数进行处理
+//            bool isInteger = false;
+//            int resultInt = Utils::SToI(file, isInteger, i);
+//            if (isInteger) { // 整数
+//                Counter::incSymbolCntMap(Symbol::INTEGER);
+//                std::cout << "get a inte : '" << resultInt << "' " << Utils::getPositionStr(i) << std::endl;
+//            } else { // 浮点
+//                bool isDouble = false;
+//                double resultDouble = Utils::SToD(file, isDouble, i);
+//                if (isDouble) {
+//                    Counter::incSymbolCntMap(Symbol::DOUBLE);
+//                    std::cout << "get a doub : '" << resultDouble << "' " << Utils::getPositionStr(i) << std::endl;
+//                } else {
+//                    //
+//                    std::cout << "'" << Utils::getValidWordToSeparator(file, i) << "'" << std::endl;
+//                    std::cout << "it is not a digit" << Utils::getPositionStr(i) << std::endl;
+//                }
+//            }
+
+            bool isDouble = false;
+            double resultDouble = Utils::SToD(file, isDouble, i);
+            if (isDouble) {
+                Counter::incSymbolCntMap(Symbol::DOUBLE);
+                std::cout << "get a doub : '" << resultDouble << "' " << Utils::getPositionStr(i) << std::endl;
+            } else {
+                // todo 对负数进行处理
+                bool isInteger = false;
+                int resultInt = Utils::SToI(file, isInteger, i);
+                if (isInteger) { // 整数
+                    Counter::incSymbolCntMap(Symbol::INTEGER);
+                    std::cout << "get a inte : '" << resultInt << "' " << Utils::getPositionStr(i) << std::endl;
                 } else {
-                    //
                     std::cout << "'" << Utils::getValidWordToSeparator(file, i) << "'" << std::endl;
                     std::cout << "it is not a digit" << Utils::getPositionStr(i) << std::endl;
                 }
             }
+
             continue;
         }
         if (Utils::isPunctuation(Utils::CToS(c))) { // 符号

@@ -10,6 +10,8 @@ int main() {
         return -1;
     }
 
+    9.99
+
     char temp_line[MAX_LENGTH];
     while (!feof(fp)) {
         fgets(temp_line, MAX_LENGTH, fp);
